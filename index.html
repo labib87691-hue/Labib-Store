@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labib Store - Admin Console</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Hind Siliguri', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            light: '#0ea5e9',
+                            DEFAULT: '#0f766e',
+                            dark: '#0d9488',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles for premium dashboard look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(15, 23, 42, 0.2);
+            border-radius: 999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans flex flex-col">
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl overflow-hidden shadow-lg bg-teal-900 flex items-center justify-center">
+                        <img src="https://file.garden/abWjgMU62Q2PuZ9W/Untitled%20design%20(6).png" alt="Labib Store Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/0f766e/ffffff?text=L'">
+                    </div>
+                    <div>
+                        <span class="text-lg font-extrabold tracking-wider bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">LABIB CONSOLE</span>
+                        <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold tracking-widest -mt-1">ADMIN CONTROL PORTAL</p>
+                    </div>
+                </div>
+
+                <!-- Right Side Actions -->
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleConfigModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition" title="ফায়ারবেস কানেকশন সেটিংস">
+                        <i class="fa-solid fa-gears text-sm"></i>
+                    </button>
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+                        <i class="fa-solid fa-sun dark:hidden"></i>
+                        <i class="fa-solid fa-moon hidden dark:block"></i>
+                    </button>
+
+                    <!-- User Identity Badge -->
+                    <div id="user-area" class="hidden flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-3">
+                        <img id="admin-avatar" src="" alt="Admin Profile" class="w-8 h-8 rounded-full ring-2 ring-teal-500 object-cover">
+                        <div class="hidden md:block text-left">
+                            <p id="admin-display-name" class="text-xs font-bold truncate max-w-[120px]">অ্যাডমিন</p>
+                            <span class="text-[9px] text-emerald-500 font-bold uppercase tracking-wider block -mt-0.5"><i class="fa-solid fa-shield-halved"></i> Verified Admin</span>
+                        </div>
+                        <button onclick="signOutAdmin()" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition" title="লগআউট">
+                            <i class="fa-solid fa-power-off text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Auth Screen (Shown when Signed Out) -->
+        <div id="auth-screen" class="max-w-md mx-auto my-12 p-8 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 text-center animate-in fade-in duration-300">
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-teal-500 to-cyan-500 p-0.5 shadow-lg shadow-teal-500/20 mb-6">
+                <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[22px] flex items-center justify-center">
+                    <img src="https://file.garden/abWjgMU62Q2PuZ9W/Untitled%20design%20(6).png" alt="Admin Logo" class="w-14 h-14 object-cover">
+                </div>
+            </div>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">লাবিব স্টোর অ্যাডমিন প্যানেল</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 mb-8">আপনার স্টোর নিয়ন্ত্রণ করতে এবং রিয়েল-টাইমে অ্যাপ আপলোড ও রিমুভ করতে আপনার নির্ধারিত জিমেইল অ্যাকাউন্ট দিয়ে সাইন-ইন করুন।</p>
+            
+            <button onclick="signInAdmin()" class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition active:scale-[0.98]">
+                <i class="fa-brands fa-google text-lg"></i>
+                গুগল অ্যাকাউন্ট দিয়ে সাইন-ইন করুন
+            </button>
+        </div>
+
+        <!-- Access Denied Screen -->
+        <div id="denied-screen" class="hidden max-w-md mx-auto my-12 p-8 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-rose-100 dark:border-rose-950/30 text-center animate-in fade-in duration-300">
+            <div class="w-16 h-16 bg-rose-100 dark:bg-rose-950/30 text-rose-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-5">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="text-xl font-bold text-rose-600 dark:text-rose-400">অ্যাক্সেস প্রত্যাখ্যান করা হয়েছে!</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">আপনার লগইনকৃত ইমেইলটি অ্যাডমিন হিসেবে অনুমোদিত নয়। দয়া করে সঠিক অ্যাডমিন ইমেইল ব্যবহার করুন।</p>
+            <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl mt-4 text-xs font-mono break-all text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-900/60" id="denied-email-label"></div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="signOutAdmin()" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold py-2.5 rounded-xl text-sm transition">লগআউট করুন</button>
+                <button onclick="toggleConfigModal()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2.5 rounded-xl text-sm transition">অ্যাডমিন সেটিংস</button>
+            </div>
+        </div>
+
+        <!-- Main Admin Dashboard Panel (Visible only to authorized admin) -->
+        <div id="admin-dashboard" class="hidden space-y-8 animate-in fade-in duration-500">
+            
+            <!-- Quick Info / Stat Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-3xl shadow-sm flex items-center gap-5">
+                    <div class="w-12 h-12 bg-teal-100 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">মোট লাইভ অ্যাপ</span>
+                        <span id="stat-total-apps" class="text-2xl font-black">০</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl shadow-sm flex items-center gap-5">
+                    <div class="w-12 h-12 bg-sky-100 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">সাধারণ অ্যাপ্লিকেশন</span>
+                        <span id="stat-apps" class="text-2xl font-black">০</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl shadow-sm flex items-center gap-5">
+                    <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">মোবাইল গেমস</span>
+                        <span id="stat-games" class="text-2xl font-black">০</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Left: App Add Form -->
+                <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm">
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-plus text-teal-500"></i> নতুন অ্যাপ আপলোড করুন
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">নিচের ৩টি প্রধান তথ্যসহ অ্যাপটি সরাসরি ফায়ারবেস ক্লাউডে পোস্ট করুন।</p>
+
+                    <form id="add-app-form" onsubmit="handleAppPublish(event)" class="space-y-4">
+                        <!-- REQUIRED 1: App Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">১. অ্যাপের নাম (App Name) *</label>
+                            <input type="text" id="app-name" required placeholder="উদাঃ লাবিব চ্যাট এআই" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
+                        </div>
+
+                        <!-- REQUIRED 2: App Icon Link -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">২. অ্যাপ আইকন ইমেজ লিঙ্ক (Icon Link) *</label>
+                            <input type="url" id="app-icon-link" required placeholder="https://example.com/logo.png" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
+                        </div>
+
+                        <!-- REQUIRED 3: Download Link -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">৩. ডাউনলোড বা সোর্স লিঙ্ক (Download Link) *</label>
+                            <input type="url" id="app-download-link" required placeholder="https://example.com/download" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
+                        </div>
+
+                        <!-- Optional Layout Extras for better store alignment -->
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800/60 my-2">
+                            <span class="text-[10px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider block mb-2">স্টোর অপ্টিমাইজেশন (ঐচ্ছিক)</span>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1">ক্যাটাগরি</label>
+                                    <select id="app-category" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-900 dark:text-white focus:outline-none">
+                                        <option value="apps">অ্যাপ (Apps)</option>
+                                        <option value="games">গেম (Games)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1">সাইজ (মেগাবাইট)</label>
+                                    <input type="text" id="app-size" placeholder="15 MB" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-900 dark:text-white focus:outline-none">
+                                </div>
+                            </div>
+                            <div class="mt-2.5">
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1">ডেভেলপার বা ব্র্যান্ডের নাম</label>
+                                <input type="text" id="app-developer" placeholder="Labib Ltd." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-900 dark:text-white focus:outline-none">
+                            </div>
+                            <div class="mt-2.5">
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1">অ্যাপ ডেসক্রিপশন</label>
+                                <textarea id="app-description" rows="2" placeholder="অ্যাপ্লিকেশনটি সম্পর্কে বিস্তারিত লিখুন..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-900 dark:text-white focus:outline-none"></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition active:scale-[0.98] mt-2">
+                            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> সরাসরি আপলোড করুন
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right: Active App Database List -->
+                <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col h-[620px]">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-indigo-500"></i> লাইভ অ্যাপ্লিকেশন লিস্ট
+                        </h3>
+                        <span id="live-indicator" class="hidden text-xs text-emerald-500 font-bold flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> রিয়েল-টাইম লাইভ
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-4">আপনার স্টোরে বর্তমানে এই ডাটাগুলো লাইভ আছে। যে কোনো অ্যাপ মুছে ফেলতে ডিলিট বাটনে চাপুন।</p>
+
+                    <!-- Table Container -->
+                    <div class="flex-grow overflow-y-auto border border-slate-100 dark:border-slate-800/80 rounded-2xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-950 text-slate-500 border-b border-slate-100 dark:border-slate-800">
+                                    <th class="p-3.5 font-bold">অ্যাপ আইকন ও নাম</th>
+                                    <th class="p-3.5 font-bold">ক্যাটাগরি</th>
+                                    <th class="p-3.5 font-bold text-center">মুছে ফেলুন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="live-apps-table" class="divide-y divide-slate-100 dark:divide-slate-800/40">
+                                <!-- Dynamic entries are loaded here -->
+                            </tbody>
+                        </table>
+
+                        <!-- Loading State inside table -->
+                        <div id="table-loader" class="text-center py-16">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-t-teal-500 border-teal-500/10 mb-2"></div>
+                            <p class="text-slate-400 font-medium">ফায়ারবেস ক্লাউড কানেক্ট হচ্ছে...</p>
+                        </div>
+
+                        <!-- Empty State inside table -->
+                        <div id="table-empty" class="hidden text-center py-16">
+                            <i class="fa-solid fa-folder-open text-slate-300 dark:text-slate-700 text-4xl mb-3"></i>
+                            <p class="text-slate-400 font-medium">কোনো অ্যাপ পাওয়া যায়নি</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Custom Firebase Config Settings Modal -->
+    <div id="config-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+            <div onclick="toggleConfigModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md sm:w-full border border-slate-200 dark:border-slate-800">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-teal-500"></i> অ্যাডমিন গেটওয়ে কনফিগারেশন
+                        </h3>
+                        <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed">অ্যাডমিন হিসেবে অ্যাক্সেস পাওয়ার ইমেইল এবং ফায়ারবেস প্রজেক্টের রিয়েল-টাইম কনফিগারেশন এখান থেকে পরিবর্তন করুন।</p>
+
+                    <div class="space-y-3.5">
+                        <!-- CUSTOM: Admin Verified Email Settings -->
+                        <div>
+                            <label class="block text-[10px] font-black text-teal-500 mb-1 uppercase tracking-wider">🔒 Authorized Admin Email</label>
+                            <input type="email" id="config-admin-email" placeholder="labib@gmail.com" class="w-full bg-slate-50 dark:bg-slate-950 border-2 border-teal-500/30 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-teal-500">
+                        </div>
+
+                        <hr class="border-slate-100 dark:border-slate-800 my-1">
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">API Key</label>
+                            <input type="text" id="config-api-key" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Auth Domain</label>
+                            <input type="text" id="config-auth-domain" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Project ID</label>
+                                <input type="text" id="config-project-id" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">App ID</label>
+                                <input type="text" id="config-app-id" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 mt-5">
+                        <button onclick="resetConfigToDefault()" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-3 rounded-xl hover:bg-slate-200 transition">ডিফল্ট রিস্টোর</button>
+                        <button onclick="saveActiveConfig()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold py-2 px-3 rounded-xl transition shadow">সংরক্ষণ করুন</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Message Box for feedback alerts -->
+    <div id="toast-msg" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-3.5 rounded-2xl flex items-center gap-3 shadow-2xl transition duration-300 pointer-events-none">
+        <span id="toast-icon-box" class="text-teal-400"><i class="fa-solid fa-circle-check"></i></span>
+        <span id="toast-text-box" class="text-xs font-semibold">কার্যক্রম সফল হয়েছে!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-900 py-6 text-center text-xs text-slate-400 font-medium">
+        <p>© ২০২৬ লাবিব স্টোর অ্যাডমিন কন্ট্রোল পোর্টাল। সমস্ত অধিকার সংরক্ষিত।</p>
+    </footer>
+
+    <!-- Firebase Javascript Integration Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Predefined Fallback Firebase Config (Supplied by User)
+        const defaultFirebaseConfig = {
+            apiKey: "AIzaSyBRp56tnWaPCpjC0D48FMK1RVOHbHTuAjo",
+            authDomain: "labib-store-65773.firebaseapp.com",
+            projectId: "labib-store-65773",
+            storageBucket: "labib-store-65773.firebasestorage.app",
+            messagingSenderId: "931664350227",
+            appId: "1:931664350227:web:dadcfd9b8a39f02b3443e6",
+            measurementId: "G-8XMLZVKCV5"
+        };
+
+        // Predefined Authorized Admin Email (Supplied by User)
+        const defaultAdminEmail = "labib@gmail.com"; 
+
+        // Load stored variables
+        let loadedConfig = localStorage.getItem('custom_firebase_config') 
+            ? JSON.parse(localStorage.getItem('custom_firebase_config')) 
+            : defaultFirebaseConfig;
+
+        let activeAdminEmail = localStorage.getItem('authorized_admin_email') 
+            ? localStorage.getItem('authorized_admin_email') 
+            : defaultAdminEmail;
+
+        // Initialize Firebase
+        let app, db, auth;
+        try {
+            app = initializeApp(loadedConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase startup error. Fallback loaded.", error);
+            app = initializeApp(defaultFirebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        }
+
+        const provider = new GoogleAuthProvider();
+        const appIdPrefix = 'labib-store-v2';
+
+        // Global UI state variables
+        let localAppsList = [];
+
+        // Google Sign In trigger for Admin
+        window.signInAdmin = async () => {
+            AudioEngine.playClick();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (err) {
+                console.error("Google Popup Auth Error", err);
+                showNotification("লগইন ব্যর্থ হয়েছে! আবার চেষ্টা করুন।", "fa-triangle-exclamation", true);
+            }
+        };
+
+        // Sign Out trigger
+        window.signOutAdmin = async () => {
+            AudioEngine.playClick();
+            try {
+                await signOut(auth);
+                showNotification("সাফল্যের সাথে লগআউট করা হয়েছে।", "fa-circle-check");
+            } catch (err) {
+                showNotification("লগআউট করা যাচ্ছে না।", "fa-circle-exclamation", true);
+            }
+        };
+
+        // Monitor User Auth State
+        onAuthStateChanged(auth, (user) => {
+            const authScreen = document.getElementById('auth-screen');
+            const deniedScreen = document.getElementById('denied-screen');
+            const adminDashboard = document.getElementById('admin-dashboard');
+            const userArea = document.getElementById('user-area');
+
+            if (user) {
+                // If user is verified matching the configured admin email
+                if (user.email.toLowerCase() === activeAdminEmail.toLowerCase()) {
+                    authScreen.classList.add('hidden');
+                    deniedScreen.classList.add('hidden');
+                    adminDashboard.classList.remove('hidden');
+                    userArea.classList.remove('hidden');
+
+                    document.getElementById('admin-avatar').src = user.photoURL || "https://placehold.co/100x100/0f766e/ffffff?text=A";
+                    document.getElementById('admin-display-name').innerText = user.displayName || "অ্যাডমিন";
+                    
+                    showNotification(`স্বাগতম অ্যাডমিন, ${user.displayName}!`, "fa-shield-halved");
+                    
+                    // Fire real-time apps collection stream
+                    syncLiveDatabase();
+                } else {
+                    // Sign-in email does not match admin credentials
+                    authScreen.classList.add('hidden');
+                    adminDashboard.classList.add('hidden');
+                    userArea.classList.add('hidden');
+                    
+                    const deniedLabel = document.getElementById('denied-email-label');
+                    deniedLabel.innerHTML = `লগইনকৃত ইমেইল: <span class="text-rose-500 font-bold">${user.email}</span>`;
+                    deniedScreen.classList.remove('hidden');
+                    
+                    showNotification("অনুপ্রবেশকারী সনাক্ত! অ্যাক্সেস প্রত্যাখ্যান।", "fa-triangle-exclamation", true);
+                }
+            } else {
+                // User signed out
+                authScreen.classList.remove('hidden');
+                deniedScreen.classList.add('hidden');
+                adminDashboard.classList.add('hidden');
+                userArea.classList.add('hidden');
+            }
+
+            // Sync settings panel input values
+            populateSettingsInputs();
+        });
+
+        // Real-time synchronization of Firebase apps data list
+        function syncLiveDatabase() {
+            const pathRef = collection(db, 'artifacts', appIdPrefix, 'public', 'data', 'apps');
+            
+            document.getElementById('table-loader').classList.remove('hidden');
+            document.getElementById('live-indicator').classList.remove('hidden');
+
+            onSnapshot(pathRef, (snapshot) => {
+                document.getElementById('table-loader').classList.add('hidden');
+                localAppsList = [];
+                
+                snapshot.forEach((doc) => {
+                    localAppsList.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderAdminAppTable();
+                updateStats();
+            }, (error) => {
+                console.error("Firestore database reading error", error);
+                document.getElementById('table-loader').classList.add('hidden');
+                showNotification("ডেটা লোড করতে ব্যর্থ! পারমিশন রুলস চেক করুন।", "fa-triangle-exclamation", true);
+            });
+        }
+
+        // Publish App Action to Firebase
+        window.handleAppPublish = async (event) => {
+            event.preventDefault();
+            AudioEngine.playClick();
+
+            const name = document.getElementById('app-name').value.trim();
+            const iconUrl = document.getElementById('app-icon-link').value.trim();
+            const downloadUrl = document.getElementById('app-download-link').value.trim();
+            
+            const category = document.getElementById('app-category').value;
+            const size = document.getElementById('app-size').value.trim() || "12 MB";
+            const dev = document.getElementById('app-developer').value.trim() || "Labib Software";
+            const desc = document.getElementById('app-description').value.trim() || "এই অ্যাপ্লিকেশনটি অত্যন্ত যত্ন সহকারে প্রস্তুত এবং লাইভ করা হয়েছে।";
+
+            const generatedDocId = 'app-' + Date.now();
+
+            // Structure data matching Labib Store client schema requirements
+            const playStorePayload = {
+                id: generatedDocId,
+                title: name,
+                category: category,
+                iconUrl: iconUrl,
+                gradient: getRandomGradient(),
+                author: dev,
+                downloads: '100+',
+                size: size,
+                rating: '5.0',
+                description: desc,
+                downloadUrl: downloadUrl,
+                reviews: []
+            };
+
+            try {
+                const targetDocRef = doc(db, 'artifacts', appIdPrefix, 'public', 'data', 'apps', generatedDocId);
+                await setDoc(targetDocRef, playStorePayload);
+                
+                // Clear input form
+                document.getElementById('add-app-form').reset();
+                AudioEngine.playSuccess();
+                showNotification("অ্যাপ্লিকেশনটি লাবিব স্টোরে লাইভ হয়েছে!", "fa-circle-check");
+            } catch (error) {
+                console.error("Error saving app directly to Firestore", error);
+                showNotification("সংরক্ষণ ব্যর্থ! সিকিউরিটি রুলস যাচাই করুন।", "fa-triangle-exclamation", true);
+            }
+        };
+
+        // Delete App Action from Firebase
+        window.deleteAppFromStore = async (appId, appName) => {
+            AudioEngine.playClick();
+            
+            const confirmAction = confirm(`আপনি কি নিশ্চিতভাবে "${appName}" অ্যাপটি ডিলিট করতে চান? এটি সাথে সাথে লাইভ স্টোর থেকে মুছে যাবে।`);
+            if (!confirmAction) return;
+
+            try {
+                const targetDocRef = doc(db, 'artifacts', appIdPrefix, 'public', 'data', 'apps', appId);
+                await deleteDoc(targetDocRef);
+                
+                AudioEngine.playSuccess();
+                showNotification("অ্যাপটি স্টোর থেকে মুছে ফেলা হয়েছে!", "fa-trash-can");
+            } catch (error) {
+                console.error("Error removing app from Firestore", error);
+                showNotification("মুছে ফেলতে ব্যর্থ! অনুমতি চেক করুন।", "fa-triangle-exclamation", true);
+            }
+        };
+
+        // Render live apps table in HTML view
+        function renderAdminAppTable() {
+            const tbody = document.getElementById('live-apps-table');
+            const emptyState = document.getElementById('table-empty');
+            tbody.innerHTML = '';
+
+            if (localAppsList.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            localAppsList.forEach((app) => {
+                const row = `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/40 transition">
+                        <td class="p-3 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr ${app.gradient || 'from-teal-500 to-cyan-500'} text-white flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
+                                ${app.iconUrl ? `<img src="${app.iconUrl}" class="w-full h-full object-cover" onerror="this.style.display='none'">` : `<i class="fa-solid fa-cube text-lg"></i>`}
+                            </div>
+                            <div class="truncate max-w-[150px] sm:max-w-[220px]">
+                                <span class="font-bold text-slate-800 dark:text-slate-100 block truncate">${app.title || app.name}</span>
+                                <span class="text-[10px] text-slate-400 font-medium truncate block">${app.author || 'Admin'}</span>
+                            </div>
+                        </td>
+                        <td class="p-3">
+                            <span class="inline-block px-2 py-1 text-[10px] font-bold rounded-lg ${app.category === 'apps' ? 'bg-teal-50 dark:bg-teal-950/50 text-teal-600' : 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'}">
+                                ${app.category === 'apps' ? 'Apps' : 'Games'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteAppFromStore('${app.id}', '${app.title || app.name}')" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition" title="মুছে ফেলুন">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        // Calculate and update local status counters
+        function updateStats() {
+            const total = localAppsList.length;
+            const appsCount = localAppsList.filter(a => a.category === 'apps').length;
+            const gamesCount = localAppsList.filter(a => a.category === 'games').length;
+
+            document.getElementById('stat-total-apps').innerText = total;
+            document.getElementById('stat-apps').innerText = appsCount;
+            document.getElementById('stat-games').innerText = gamesCount;
+        }
+
+        // Populate inputs inside configuration screen
+        function populateSettingsInputs() {
+            document.getElementById('config-admin-email').value = activeAdminEmail;
+            document.getElementById('config-api-key').value = loadedConfig.apiKey || "";
+            document.getElementById('config-auth-domain').value = loadedConfig.authDomain || "";
+            document.getElementById('config-project-id').value = loadedConfig.projectId || "";
+            document.getElementById('config-app-id').value = loadedConfig.appId || "";
+        }
+
+        // Save customized firebase config to local storage
+        window.saveActiveConfig = () => {
+            AudioEngine.playClick();
+            
+            const adminEmailInput = document.getElementById('config-admin-email').value.trim();
+            const configObj = {
+                apiKey: document.getElementById('config-api-key').value.trim(),
+                authDomain: document.getElementById('config-auth-domain').value.trim(),
+                projectId: document.getElementById('config-project-id').value.trim(),
+                appId: document.getElementById('config-app-id').value.trim(),
+            };
+
+            if (!adminEmailInput) {
+                showNotification("অ্যাডমিন অ্যাক্সেস জিমেইল প্রদান করা আবশ্যক!", "fa-triangle-exclamation", true);
+                return;
+            }
+
+            localStorage.setItem('authorized_admin_email', adminEmailInput);
+            localStorage.setItem('custom_firebase_config', JSON.stringify(configObj));
+
+            showNotification("কনফিগারেশন সংরক্ষিত হয়েছে! রিবুট হচ্ছে...", "fa-circle-check");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        };
+
+        // Reset inputs to original user code defaults
+        window.resetConfigToDefault = () => {
+            AudioEngine.playClick();
+            localStorage.removeItem('custom_firebase_config');
+            localStorage.removeItem('authorized_admin_email');
+            
+            showNotification("রিস্টোর সম্পন্ন! রিলোড করা হচ্ছে...", "fa-circle-check");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        };
+
+        // Generate random gradients for new uploads
+        function getRandomGradient() {
+            const gradients = [
+                'from-emerald-400 to-teal-600',
+                'from-rose-500 to-pink-600',
+                'from-amber-400 to-orange-500',
+                'from-blue-500 to-indigo-600',
+                'from-purple-500 to-violet-700'
+            ];
+            return gradients[Math.floor(Math.random() * gradients.length)];
+        }
+    </script>
+
+    <script>
+        // Web Audio Feedback Controller
+        const AudioEngine = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playClick() {
+                try {
+                    this.init();
+                    let osc = this.ctx.createOscillator();
+                    let gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+                    
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.08);
+                } catch(e) {}
+            },
+            playSuccess() {
+                try {
+                    this.init();
+                    let osc = this.ctx.createOscillator();
+                    let gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.16); // G5
+                    
+                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                    
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.3);
+                } catch(e) {}
+            }
+        };
+
+        // Dark/Light Theme Switch
+        function toggleTheme() {
+            AudioEngine.playClick();
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize Theme Mode on Startup
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Settings config modal handler
+        function toggleConfigModal() {
+            AudioEngine.playClick();
+            const modal = document.getElementById('config-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Dynamic Native Notification Builder
+        function showNotification(message, iconName, isError = false) {
+            const toast = document.getElementById('toast-msg');
+            const text = document.getElementById('toast-text-box');
+            const icon = document.getElementById('toast-icon-box');
+
+            text.innerText = message;
+            icon.innerHTML = `<i class="fa-solid ${iconName}"></i>`;
+
+            if (isError) {
+                icon.className = "text-rose-500 text-sm";
+            } else {
+                icon.className = "text-teal-400 text-sm";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
