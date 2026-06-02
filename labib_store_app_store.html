@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labib Store - আপনার পছন্দের অ্যাপস ও গেমস</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Hind Siliguri', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            light: '#00a3ff',
+                            DEFAULT: '#0f766e',
+                            dark: '#0d9488',
+                            playGreen: '#01875f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar and premium aesthetic designs */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(15, 23, 42, 0.2);
+            border-radius: 999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(15, 23, 42, 0.4);
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+        .pulse-active {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="sticky top-0 z-40 glass-panel border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo with User's custom brand image -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+                    <div class="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-teal-500/20 bg-teal-900 flex items-center justify-center">
+                        <img src="https://file.garden/abWjgMU62Q2PuZ9W/Untitled%20design%20(6).png" alt="Labib Store Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/0f766e/ffffff?text=L'">
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">LABIB STORE</span>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-widest -mt-1">PLAY STORE SIMULATOR</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Menu -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <button onclick="filterCategory('all')" id="nav-btn-all" class="px-4 py-2 rounded-full text-sm font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40">
+                        <i class="fa-solid fa-compass mr-2"></i>সব অ্যাপ
+                    </button>
+                    <button onclick="filterCategory('apps')" id="nav-btn-apps" class="px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-mobile-screen-button mr-2"></i>অ্যাপস
+                    </button>
+                    <button onclick="filterCategory('games')" id="nav-btn-games" class="px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-gamepad mr-2"></i>গেমস
+                    </button>
+                    <button onclick="openDeveloperPortal()" class="px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-code mr-2"></i>ডেভেলপার পোর্টাল
+                    </button>
+                </div>
+
+                <!-- Right Side actions (Search, Darkmode, Installed Library, Firebase Configuration, User Auth) -->
+                <div class="flex items-center gap-2">
+                    <!-- Config Settings Button -->
+                    <button onclick="toggleConfigModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition" title="ফায়ারবেস সেটিংস">
+                        <i class="fa-solid fa-sliders text-base"></i>
+                    </button>
+
+                    <!-- Library Button -->
+                    <button onclick="toggleLibraryModal()" class="relative p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition" title="ইনস্টলকৃত অ্যাপস">
+                        <i class="fa-solid fa-download text-lg"></i>
+                        <span id="library-count" class="absolute -top-1 -right-1 bg-teal-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-50 dark:border-slate-950">0</span>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <button onclick="toggleTheme()" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition" title="থিম পরিবর্তন">
+                        <i class="fa-solid fa-sun dark:hidden text-lg"></i>
+                        <i class="fa-solid fa-moon hidden dark:block text-lg"></i>
+                    </button>
+
+                    <!-- Dynamic Auth Button (Gmail Login) -->
+                    <div id="auth-container" class="flex items-center ml-1">
+                        <!-- Login Button (Shown when Signed Out) -->
+                        <button id="login-btn" onclick="signInWithGmail()" class="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold hover:opacity-90 transition active:scale-95 shadow">
+                            <i class="fa-brands fa-google text-sm"></i>
+                            <span class="hidden sm:inline">লগইন করুন</span>
+                        </button>
+                        <!-- User Profile Info (Shown when Signed In) -->
+                        <div id="user-profile" class="hidden flex items-center gap-2">
+                            <div class="relative group">
+                                <img id="user-avatar" src="" alt="User" class="w-9 h-9 rounded-full ring-2 ring-teal-400 cursor-pointer object-cover">
+                                <div class="absolute right-0 top-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 shadow-xl hidden group-hover:block w-48 text-left transition z-50">
+                                    <p id="user-name" class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">ব্যবহারকারী</p>
+                                    <p id="user-email" class="text-[10px] text-slate-400 truncate mb-2">email@gmail.com</p>
+                                    <button onclick="signOutUser()" class="w-full text-left text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
+                                        <i class="fa-solid fa-right-from-bracket"></i> লগআউট করুন
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Tab Bar (Bottom) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800 flex justify-around py-2 shadow-lg backdrop-blur">
+        <button onclick="filterCategory('all'); selectMobileTab(this)" class="mobile-tab-btn flex flex-col items-center gap-1 text-teal-500">
+            <i class="fa-solid fa-home text-lg"></i>
+            <span class="text-[10px] font-medium">হোম</span>
+        </button>
+        <button onclick="filterCategory('apps'); selectMobileTab(this)" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-box-open text-lg"></i>
+            <span class="text-[10px] font-medium">অ্যাপস</span>
+        </button>
+        <button onclick="filterCategory('games'); selectMobileTab(this)" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-gamepad text-lg"></i>
+            <span class="text-[10px] font-medium">গেমস</span>
+        </button>
+        <button onclick="openDeveloperPortal(); selectMobileTab(this)" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-laptop-code text-lg"></i>
+            <span class="text-[10px] font-medium">ডেভেলপার</span>
+        </button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-16 md:mb-6">
+        
+        <!-- Search & Filter Area -->
+        <div class="mb-8">
+            <div class="relative max-w-2xl mx-auto">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                </div>
+                <input type="text" id="store-search" oninput="handleSearch(this.value)" placeholder="অ্যাপ বা গেম খুঁজুন..." class="block w-full pl-11 pr-20 py-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition shadow-sm">
+                <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+                    <span id="search-clear-btn" onclick="clearSearch()" class="hidden cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-full transition mr-1">
+                        <i class="fa-solid fa-circle-xmark text-slate-400 hover:text-slate-600"></i>
+                    </span>
+                    <button class="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow hover:opacity-90 active:scale-95 transition">খুঁজুন</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo / Featured Banner Carousel -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-700 to-indigo-900 text-white p-6 sm:p-10 mb-8 shadow-xl shadow-teal-950/20">
+            <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute left-1/3 top-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <span class="bg-teal-500/30 text-teal-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-teal-500/20"><i class="fa-solid fa-sparkles mr-1.5"></i>সপ্তাহের সেরা অ্যাপ</span>
+                    <h1 class="text-3xl sm:text-4xl font-black mt-3 leading-tight font-sans">লাবিব চ্যাট জিপিটি: <br><span class="text-teal-300">স্মার্ট বাংলা এআই সহকারী</span></h1>
+                    <p class="text-slate-200 text-sm mt-3 font-light leading-relaxed">সম্পূর্ণ ফ্রিতে কথা বলুন অ্যাডভান্সড বাংলা আর্টিফিশিয়াল ইন্টেলিজেন্সের সাথে। যেকোনো প্রশ্নের উত্তর জানুন নিমেষেই!</p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <button onclick="openAppDetail('labib-chat-ai')" class="bg-white text-slate-900 hover:bg-slate-100 font-bold px-6 py-2.5 rounded-xl text-sm transition flex items-center gap-2 active:scale-95 shadow-md">
+                            <i class="fa-solid fa-download"></i> ইন্সটল করুন
+                        </button>
+                        <button onclick="openAppDetail('labib-chat-ai')" class="bg-white/15 hover:bg-white/20 border border-white/20 font-semibold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-1.5">
+                            বিস্তারিত দেখুন
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden md:flex justify-end items-center relative">
+                    <!-- Dynamic Phone mockup presentation -->
+                    <div class="w-56 h-[320px] bg-slate-900 rounded-[3rem] p-3 shadow-2xl border-4 border-slate-800 relative overflow-hidden transform rotate-2 hover:rotate-0 transition duration-500">
+                        <div class="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-4 bg-slate-950 rounded-full z-20 flex items-center justify-center">
+                            <span class="w-2.5 h-2.5 bg-slate-800 rounded-full"></span>
+                        </div>
+                        <div class="h-full w-full bg-gradient-to-b from-teal-950 to-slate-900 rounded-[2.5rem] flex flex-col justify-between p-4 relative z-10 text-xs">
+                            <div class="flex justify-between items-center text-slate-400 mt-2">
+                                <span>৯:৪১</span>
+                                <div class="flex gap-1"><i class="fa-solid fa-wifi"></i><i class="fa-solid fa-battery-full"></i></div>
+                            </div>
+                            <div class="my-auto text-center">
+                                <i class="fa-solid fa-robot text-teal-400 text-5xl mb-2 animate-bounce"></i>
+                                <h3 class="font-bold text-white text-sm">লাবিব চ্যাট এআই</h3>
+                                <p class="text-[10px] text-teal-300/80 mt-1">সব সময় আপনার পাশে</p>
+                                <div class="bg-slate-800/80 rounded-lg p-2 mt-4 text-left border border-teal-500/20">
+                                    <p class="text-slate-300 font-light">"আজকের আবহাওয়া কেমন?"</p>
+                                    <p class="text-teal-400 mt-1">"আজ আকাশ মেঘলা থাকবে..."</p>
+                                </div>
+                            </div>
+                            <div class="w-16 h-1 bg-white/40 rounded-full mx-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Header / Status of lists -->
+        <div class="flex items-center justify-between mb-6">
+            <h2 id="section-title" class="text-xl sm:text-2xl font-extrabold tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-fire text-amber-500"></i> সেরা ট্রেন্ডিং অ্যাপস ও গেমস
+            </h2>
+            <span id="results-count" class="text-sm font-medium text-slate-500 dark:text-slate-400">০টি অ্যাপ পাওয়া গেছে</span>
+        </div>
+
+        <div id="loader-state" class="text-center py-16 hidden">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-t-teal-500 border-teal-500/20 mb-4"></div>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-semibold">ফায়ারবেস থেকে অ্যাপের ডেটা লোড করা হচ্ছে...</p>
+        </div>
+
+        <!-- Apps Display Grid -->
+        <div id="apps-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+            <!-- Dynamic app injection area -->
+        </div>
+
+    </main>
+
+    <!-- App Detail Modal Backdrop -->
+    <div id="app-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+            <!-- Modal overlay -->
+            <div onclick="closeAppModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"></div>
+
+            <!-- Modal box -->
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl sm:w-full border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
+                <div class="absolute top-4 right-4 z-10">
+                    <button onclick="closeAppModal()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 w-10 h-10 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 sm:p-8">
+                    <!-- Top section with icon and main download action -->
+                    <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                        <div id="modal-app-icon-container" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex items-center justify-center text-white text-5xl shadow-xl overflow-hidden bg-slate-200 dark:bg-slate-800">
+                            <img id="modal-app-icon-img" src="" alt="Icon" class="w-full h-full object-cover hidden">
+                            <i id="modal-app-icon-fa" class="fa-solid fa-cube text-slate-500"></i>
+                        </div>
+                        <div class="flex-grow w-full">
+                            <h3 id="modal-app-name" class="text-2xl font-black text-slate-900 dark:text-white leading-tight">অ্যাপের নাম</h3>
+                            <p id="modal-app-dev" class="text-teal-600 dark:text-teal-400 font-bold text-sm mt-1">ডেভেলপার</p>
+                            <span id="modal-app-category-badge" class="inline-block mt-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs px-2.5 py-1 rounded-full font-semibold">ক্যাটাগরি</span>
+                            
+                            <!-- Installation trigger container -->
+                            <div class="mt-4 flex flex-wrap items-center gap-3">
+                                <button id="modal-install-btn" onclick="startInstallFromModal()" class="bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-teal-500/15 min-w-[120px]">
+                                    <i class="fa-solid fa-download"></i> ইন্সটল করুন
+                                </button>
+                                <span id="modal-install-spinner" class="hidden text-teal-500"><i class="fa-solid fa-circle-notch animate-spin text-xl"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar (Visible only during active download) -->
+                    <div id="modal-progress-container" class="mt-6 hidden">
+                        <div class="flex justify-between items-center text-xs mb-1.5 text-slate-500 dark:text-slate-400 font-semibold">
+                            <span id="modal-progress-label">ডাউনলোড হচ্ছে...</span>
+                            <span id="modal-progress-percent">০%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                            <div id="modal-progress-bar" class="bg-gradient-to-r from-teal-500 to-cyan-500 h-full w-0 transition-all duration-100"></div>
+                        </div>
+                    </div>
+
+                    <!-- Quick stats strip -->
+                    <div class="grid grid-cols-3 gap-2 mt-8 py-3.5 px-4 bg-slate-50 dark:bg-slate-950 rounded-2xl text-center border border-slate-100 dark:border-slate-800/40">
+                        <div>
+                            <span class="block text-xs text-slate-400 font-medium">রেটিং</span>
+                            <span class="text-slate-800 dark:text-slate-200 font-bold text-sm sm:text-base"><i class="fa-solid fa-star text-amber-500 mr-1 text-xs"></i><span id="modal-app-rating">৪.৫</span></span>
+                        </div>
+                        <div class="border-x border-slate-200 dark:border-slate-800">
+                            <span class="block text-xs text-slate-400 font-medium">সাইজ</span>
+                            <span id="modal-app-size" class="text-slate-800 dark:text-slate-200 font-bold text-sm sm:text-base">২৪ MB</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-slate-400 font-medium">ডাউনলোড</span>
+                            <span id="modal-app-downloads" class="text-slate-800 dark:text-slate-200 font-bold text-sm sm:text-base">১M+</span>
+                        </div>
+                    </div>
+
+                    <!-- App description -->
+                    <div class="mt-6">
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2">এই অ্যাপ সম্পর্কে</h4>
+                        <p id="modal-app-description" class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-light">অ্যাপের বর্ণনা এখানে প্রদর্শিত হবে।</p>
+                    </div>
+
+                    <!-- Ratings & user reviews -->
+                    <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">রিভিউ এবং রেটিং</h4>
+                            <button id="review-write-btn" onclick="toggleReviewForm()" class="text-teal-600 dark:text-teal-400 text-xs font-bold hover:underline"><i class="fa-solid fa-pen-to-square mr-1"></i>আপনার রিভিউ দিন</button>
+                        </div>
+
+                        <!-- Write Review Form -->
+                        <div id="review-form-container" class="hidden bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl mb-4 border border-slate-100 dark:border-slate-800/60">
+                            <h5 class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">রিভিউ লিখুন</h5>
+                            <!-- Star interactive select -->
+                            <div class="flex gap-1.5 mb-3" id="rating-stars-select">
+                                <i class="fa-solid fa-star text-slate-300 cursor-pointer text-xl hover:scale-110 transition" onclick="selectReviewStars(1)"></i>
+                                <i class="fa-solid fa-star text-slate-300 cursor-pointer text-xl hover:scale-110 transition" onclick="selectReviewStars(2)"></i>
+                                <i class="fa-solid fa-star text-slate-300 cursor-pointer text-xl hover:scale-110 transition" onclick="selectReviewStars(3)"></i>
+                                <i class="fa-solid fa-star text-slate-300 cursor-pointer text-xl hover:scale-110 transition" onclick="selectReviewStars(4)"></i>
+                                <i class="fa-solid fa-star text-slate-300 cursor-pointer text-xl hover:scale-110 transition" onclick="selectReviewStars(5)"></i>
+                            </div>
+                            <input type="text" id="review-user-name" placeholder="আপনার নাম..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white mb-2 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                            <textarea id="review-user-text" rows="2" placeholder="মতামত লিখুন..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-teal-500"></textarea>
+                            <div class="flex justify-end gap-2 mt-3">
+                                <button onclick="toggleReviewForm()" class="text-slate-500 text-xs px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">বাতিল</button>
+                                <button onclick="submitReview()" class="bg-teal-600 text-white font-bold text-xs px-4 py-1.5 rounded-lg hover:bg-teal-700">জমা দিন</button>
+                            </div>
+                        </div>
+
+                        <!-- Reviews list inside modal -->
+                        <div id="modal-app-reviews" class="space-y-3 max-h-40 overflow-y-auto pr-2">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Library / Installed Apps Drawer Modal -->
+    <div id="library-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+            <div onclick="toggleLibraryModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md sm:w-full border border-slate-200 dark:border-slate-800">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-circle-down text-teal-500"></i> আপনার ইনস্টলকৃত অ্যাপস
+                        </h3>
+                        <button onclick="toggleLibraryModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- Library items container -->
+                    <div id="library-apps-container" class="space-y-3 max-h-96 overflow-y-auto pr-1">
+                        <!-- Dynamic items -->
+                    </div>
+
+                    <div id="empty-library-state" class="text-center py-8 hidden">
+                        <i class="fa-solid fa-ghost text-slate-300 dark:text-slate-700 text-4xl mb-3"></i>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">কোনো অ্যাপ ইনস্টল করা নেই।</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer App Submit Portal Modal -->
+    <div id="developer-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+            <div onclick="closeDeveloperPortal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full border border-slate-200 dark:border-slate-800">
+                <div class="p-6 sm:p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-code text-teal-500"></i> লাবিব ডেভেলপার কনসোল
+                        </h3>
+                        <button onclick="closeDeveloperPortal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">লাবিব প্লে-স্টোরে আপনার তৈরিকৃত অ্যাপ্লিকেশনটি যুক্ত করুন। এটি সরাসরি ফায়ারবেস ক্লাউড ডেটাবেসে সংরক্ষিত হবে এবং রিয়েল-টাইমে লাইভ হবে!</p>
+
+                    <!-- Submit Form with Custom Dynamic Image & Download URLs -->
+                    <form id="dev-app-form" onsubmit="handleDevAppSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">অ্যাপের নাম *</label>
+                            <input type="text" id="dev-app-name" required placeholder="উদাঃ লাবিব ভিপিএন" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ক্যাটাগরি *</label>
+                                <select id="dev-app-category" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    <option value="apps">অ্যাপ (Apps)</option>
+                                    <option value="games">গেম (Games)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ডেভেলপার নাম *</label>
+                                <input type="text" id="dev-app-author" required placeholder="উদাঃ লাবিব সফট" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">সাইজ (মেগাবাইট) *</label>
+                                <input type="number" id="dev-app-size" required placeholder="উদাঃ ১৫" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ডিফল্ট ব্যাকগ্রাউন্ড থিম</label>
+                                <select id="dev-app-gradient" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    <option value="from-emerald-400 to-teal-600">সবুজ (Emerald Teal)</option>
+                                    <option value="from-rose-500 to-pink-600">গোলাপী (Rose Pink)</option>
+                                    <option value="from-amber-400 to-orange-500">কমলা (Amber Orange)</option>
+                                    <option value="from-blue-500 to-indigo-600">নীল (Blue Indigo)</option>
+                                    <option value="from-purple-500 to-violet-700">বেগুনী (Purple Violet)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- CUSTOM ASSETS FIELDS REQUESTED BY USER -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">অ্যাপ আইকন ইমেজ লিংক (Image URL) *</label>
+                            <input type="url" id="dev-app-icon-link" required placeholder="https://example.com/icon.png" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ডাউনলোড লিংক (Download URL) *</label>
+                            <input type="url" id="dev-app-download-link" required placeholder="https://example.com/download" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">অ্যাপ ডেসক্রিপশন *</label>
+                            <textarea id="dev-app-desc" required rows="3" placeholder="অ্যাপটির প্রধান কাজগুলো সুন্দর করে লিখুন..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-lg transition active:scale-95">সরাসরি স্টোরে আপলোড করুন</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Firebase Config Settings Modal -->
+    <div id="config-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+            <div onclick="toggleConfigModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md sm:w-full border border-slate-200 dark:border-slate-800">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-bolt text-teal-500"></i> ফায়ারবেস কনফিগারেশন সেটিংস
+                        </h3>
+                        <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">আপনার নিজস্ব ফায়ারবেস প্রজেক্টের সাথে এই প্লে-স্টোর ডেমোটি কানেক্ট করতে নিচের কনফিগারেশন বক্স পরিবর্তন করুন।</p>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">API Key</label>
+                            <input type="text" id="config-api-key" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Auth Domain</label>
+                            <input type="text" id="config-auth-domain" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Project ID</label>
+                                <input type="text" id="config-project-id" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Storage Bucket</label>
+                                <input type="text" id="config-storage-bucket" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">App ID</label>
+                            <input type="text" id="config-app-id" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 mt-5">
+                        <button onclick="resetToDefaultConfig()" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-3 rounded-xl hover:bg-slate-200 transition">ডিফল্ট রিস্টোর</button>
+                        <button onclick="saveCustomConfig()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold py-2 px-3 rounded-xl transition shadow">সংরক্ষণ করুন</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Toast Message Box for feedback notifications -->
+    <div id="toast-message" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-2xl transition duration-300 pointer-events-none">
+        <span id="toast-icon" class="text-teal-400"><i class="fa-solid fa-circle-check"></i></span>
+        <span id="toast-text" class="text-xs font-semibold">কার্যক্রম সফল হয়েছে!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-900 py-6 text-center text-xs text-slate-400 font-medium">
+        <p>© ২০২৬ লাবিব স্টোর ইনকর্পোরেটেড। এটি একটি প্রিমিয়াম প্লে-স্টোর ডেমো সিমুলেটর।</p>
+    </footer>
+
+    <!-- Firebase core dependencies and imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, onSnapshot, collection, query, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Predefined Fallback Firebase Config (Supplied by User)
+        const defaultFirebaseConfig = {
+            apiKey: "AIzaSyBRp56tnWaPCpjC0D48FMK1RVOHbHTuAjo",
+            authDomain: "labib-store-65773.firebaseapp.com",
+            projectId: "labib-store-65773",
+            storageBucket: "labib-store-65773.firebasestorage.app",
+            messagingSenderId: "931664350227",
+            appId: "1:931664350227:web:dadcfd9b8a39f02b3443e6",
+            measurementId: "G-8XMLZVKCV5"
+        };
+
+        // Load active config from storage or fallback to default
+        let loadedConfig = localStorage.getItem('custom_firebase_config') 
+            ? JSON.parse(localStorage.getItem('custom_firebase_config')) 
+            : defaultFirebaseConfig;
+
+        // Initialize Firebase SDK Elements
+        let app, db, auth;
+        try {
+            app = initializeApp(loadedConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase Initialization Error. Reverting to default configuration.", error);
+            app = initializeApp(defaultFirebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        }
+
+        const provider = new GoogleAuthProvider();
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'labib-store-v2';
+
+        // Bind global functions to window scope to access from template elements
+        window.signInWithGmail = async () => {
+            AudioEngine.playClick();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                showToast(`স্বাগতম, ${result.user.displayName}!`, "fa-circle-check");
+            } catch (error) {
+                console.error("Google Auth error", error);
+                showToast("লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।", "fa-triangle-exclamation");
+            }
+        };
+
+        window.signOutUser = async () => {
+            AudioEngine.playClick();
+            try {
+                await signOut(auth);
+                showToast("সফলভাবে লগআউট করা হয়েছে।", "fa-circle-check");
+            } catch (error) {
+                showToast("লগআউট করা যাচ্ছে না।", "fa-triangle-exclamation");
+            }
+        };
+
+        // Listen to Auth State
+        onAuthStateChanged(auth, async (user) => {
+            const loginBtn = document.getElementById('login-btn');
+            const userProfile = document.getElementById('user-profile');
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const userEmail = document.getElementById('user-email');
+
+            if (user && !user.isAnonymous) {
+                // User logged in with Google
+                loginBtn.classList.add('hidden');
+                userProfile.classList.remove('hidden');
+                userAvatar.src = user.photoURL || "https://placehold.co/100x100/3b82f6/ffffff?text=U";
+                userName.innerText = user.displayName || "ব্যবহারকারী";
+                userEmail.innerText = user.email || "unknown@gmail.com";
+                currentUser = user;
+            } else {
+                // Logged out or Anonymous User (Silent authentication for Firestore reads)
+                loginBtn.classList.remove('hidden');
+                userProfile.classList.add('hidden');
+                currentUser = user;
+
+                if (!user) {
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (e) {
+                        console.error("Anonymous authentication failed", e);
+                    }
+                }
+            }
+            // Sync current configuration into UI input fields
+            syncConfigInputs();
+        });
+
+        // Real-time synchronization of applications list
+        const appsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'apps');
+        document.getElementById('loader-state').classList.remove('hidden');
+
+        onSnapshot(appsCollectionRef, (snapshot) => {
+            document.getElementById('loader-state').classList.add('hidden');
+            let cloudApps = [];
+            snapshot.forEach((doc) => {
+                cloudApps.push({ id: doc.id, ...doc.data() });
+            });
+
+            if (cloudApps.length === 0) {
+                // If cloud database is empty, seed with initial apps
+                seedInitialDatabase();
+            } else {
+                apps = cloudApps;
+                renderApps();
+            }
+        }, (error) => {
+            console.error("Firestore database reading error", error);
+            document.getElementById('loader-state').classList.add('hidden');
+            showToast("ডেটা লোড করতে ব্যর্থ! মেমরি ডেটা ব্যবহার হচ্ছে।", "fa-circle-exclamation");
+            // Fallback to offline defaults
+            renderApps();
+        });
+
+        // Seed initial apps inside firestore to kickstart the cloud database if empty
+        async function seedInitialDatabase() {
+            const defaults = getInitialSeedData();
+            for (let appObj of defaults) {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'apps', appObj.id), appObj);
+            }
+        }
+
+        // Upload new app via Developer portal to Firestore
+        window.handleDevAppSubmit = async (event) => {
+            event.preventDefault();
+            AudioEngine.playClick();
+
+            const name = document.getElementById('dev-app-name').value.trim();
+            const category = document.getElementById('dev-app-category').value;
+            const author = document.getElementById('dev-app-author').value.trim();
+            const size = document.getElementById('dev-app-size').value.trim();
+            const gradient = document.getElementById('dev-app-gradient').value;
+            const iconUrl = document.getElementById('dev-app-icon-link').value.trim();
+            const downloadUrl = document.getElementById('dev-app-download-link').value.trim();
+            const desc = document.getElementById('dev-app-desc').value.trim();
+
+            const docId = 'dev-app-' + Date.now();
+
+            const newApp = {
+                id: docId,
+                title: name,
+                category: category,
+                iconUrl: iconUrl, // Custom Image Link
+                gradient: gradient,
+                author: author,
+                downloads: '100+',
+                size: size + ' MB',
+                rating: '5.0',
+                description: desc,
+                downloadUrl: downloadUrl, // Custom Download Link
+                reviews: []
+            };
+
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'apps', docId), newApp);
+                document.getElementById('dev-app-form').reset();
+                closeDeveloperPortal();
+                filterCategory(category);
+                AudioEngine.playSuccess();
+                showToast("আপনার অ্যাপটি ক্লাউড স্টোরে আপলোড হয়েছে!", "fa-circle-check");
+            } catch (err) {
+                console.error("Firestore Upload Error", err);
+                showToast("আপলোড করতে সমস্যা হয়েছে, অনুগ্রহ করে লগইন করুন।", "fa-triangle-exclamation");
+            }
+        };
+
+        // Write reviews to cloud app database
+        window.submitReview = async () => {
+            AudioEngine.playClick();
+            const name = document.getElementById('review-user-name').value.trim();
+            const text = document.getElementById('review-user-text').value.trim();
+
+            if (!name || !text) {
+                showToast("দয়া করে আপনার নাম ও মতামতটি পূরণ করুন।", "fa-triangle-exclamation");
+                return;
+            }
+
+            const appObj = apps.find(a => a.id === selectedAppId);
+            if (appObj) {
+                const updatedReviews = [{
+                    name: name,
+                    rating: temporarySelectedStars,
+                    comment: text
+                }, ...(appObj.reviews || [])];
+
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'apps', selectedAppId);
+                    await updateDoc(docRef, { reviews: updatedReviews });
+                    
+                    // Instant local state update inside modal before sync
+                    appObj.reviews = updatedReviews;
+                    renderModalReviews(appObj);
+                    toggleReviewForm();
+                    showToast("মতামত প্রদানের জন্য ধন্যবাদ!", "fa-circle-check");
+                } catch (err) {
+                    console.error("Error writing review", err);
+                    showToast("রিভিউ জমা দেওয়া সম্ভব হয়নি।", "fa-triangle-exclamation");
+                }
+            }
+        };
+
+        // Synchronize Settings Configuration Panel inputs
+        function syncConfigInputs() {
+            document.getElementById('config-api-key').value = loadedConfig.apiKey || "";
+            document.getElementById('config-auth-domain').value = loadedConfig.authDomain || "";
+            document.getElementById('config-project-id').value = loadedConfig.projectId || "";
+            document.getElementById('config-storage-bucket').value = loadedConfig.storageBucket || "";
+            document.getElementById('config-app-id').value = loadedConfig.appId || "";
+        }
+
+        window.saveCustomConfig = () => {
+            AudioEngine.playClick();
+            const customConfig = {
+                apiKey: document.getElementById('config-api-key').value.trim(),
+                authDomain: document.getElementById('config-auth-domain').value.trim(),
+                projectId: document.getElementById('config-project-id').value.trim(),
+                storageBucket: document.getElementById('config-storage-bucket').value.trim(),
+                appId: document.getElementById('config-app-id').value.trim(),
+            };
+
+            if (!customConfig.apiKey || !customConfig.projectId) {
+                showToast("API Key এবং Project ID পূরণ করা আবশ্যক!", "fa-triangle-exclamation");
+                return;
+            }
+
+            localStorage.setItem('custom_firebase_config', JSON.stringify(customConfig));
+            showToast("কনফিগারেশন সংরক্ষিত হয়েছে! রিলোড করা হচ্ছে...", "fa-circle-check");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        };
+
+        window.resetToDefaultConfig = () => {
+            AudioEngine.playClick();
+            localStorage.removeItem('custom_firebase_config');
+            showToast("ডিফল্ট কনফিগারেশন রিস্টোর করা হয়েছে!", "fa-circle-check");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        };
+    </script>
+
+    <script>
+        // Sound Engine (Web Audio API for pure responsive app sounds)
+        const AudioEngine = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playClick() {
+                try {
+                    this.init();
+                    let osc = this.ctx.createOscillator();
+                    let gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                    
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.1);
+                } catch(e) {}
+            },
+            playSuccess() {
+                try {
+                    this.init();
+                    let osc = this.ctx.createOscillator();
+                    let gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.2); // G5
+                    
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
+                    
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.35);
+                } catch(e) {}
+            }
+        };
+
+        // Offline App State seed list
+        let apps = [];
+        let currentUser = null;
+
+        function getInitialSeedData() {
+            return [
+                {
+                    id: 'labib-chat-ai',
+                    title: 'লাবিব চ্যাট এআই',
+                    category: 'apps',
+                    iconUrl: '', // uses fallback FA icon
+                    gradient: 'from-emerald-400 to-teal-600',
+                    author: 'Labib Tech Ltd.',
+                    downloads: '1.2M+',
+                    size: '24 MB',
+                    rating: '4.9',
+                    downloadUrl: 'https://github.com',
+                    description: 'একটি অত্যন্ত শক্তিশালী এবং গতিশীল বাংলা কৃত্তিম বুদ্ধিমত্তা সহকারী। এই অ্যাপটির মাধ্যমে আপনি আপনার প্রতিদিনের নানা প্রশ্নের তাৎক্ষণিক উত্তর পাবেন। এর রয়েছে ভয়েস টাইপিং সুবিধা এবং এআই ইমেজ জেনারেটর মোড, যা আপনাকে দিবে অনন্য ব্যবহারের অনুভূতি।',
+                    reviews: [
+                        { name: 'আরিফ রহমান', rating: 5, comment: 'অসাধারণ বাংলা এআই! নির্ভুলভাবে কাজ করে।' },
+                        { name: 'মিঠু ইসলাম', rating: 4, comment: 'খুবই উপকারী একটি অ্যাপ, ডার্ক মোডটা খুব চমৎকার।' }
+                    ]
+                },
+                {
+                    id: 'cricket-master-26',
+                    title: 'ক্রিকেট মাস্টার ২০২৬',
+                    category: 'games',
+                    iconUrl: '',
+                    gradient: 'from-emerald-500 to-green-600',
+                    author: 'Bongo Studios',
+                    downloads: '5M+',
+                    size: '142 MB',
+                    rating: '4.9',
+                    downloadUrl: 'https://github.com',
+                    description: '২০২৬ সালের সবচেয়ে চমৎকার ও হাই-গ্রাফিক থ্রিডি ক্রিকেট গেম! সম্পূর্ণ রিয়েলস্টিক ক্রিকেট স্টেডিয়াম, ধারাভাষ্য এবং মাল্টিপ্লেয়ার টুর্নামেন্ট চ্যালেঞ্জে অংশগ্রহণ করুন। আপনার প্রিয় টিম নিয়ে ট্রফি জিতে বিশ্ব চ্যাম্পিয়ন হন।',
+                    reviews: [
+                        { name: 'তামিম ফ্যান', rating: 5, comment: 'গ্রাফিক্স অসাধারণ! একদম মন ছুঁয়ে গেছে।' }
+                    ]
+                }
+            ];
+        }
+
+        // System States
+        let currentSelectedCategory = 'all';
+        let searchQuery = '';
+        let installedApps = JSON.parse(localStorage.getItem('labib_installed_apps')) || [];
+        let selectedAppId = '';
+        let temporarySelectedStars = 5;
+
+        // Initialize Local View Components
+        window.addEventListener('load', function() {
+            renderApps();
+            updateLibraryCounter();
+            
+            // Apply Saved Theme
+            if (localStorage.getItem('theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        });
+
+        // Render Apps Grid from synchronized data
+        function renderApps() {
+            const grid = document.getElementById('apps-grid');
+            grid.innerHTML = '';
+
+            const filtered = apps.filter(app => {
+                const matchesCategory = currentSelectedCategory === 'all' || app.category === currentSelectedCategory;
+                const matchesSearch = app.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      app.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      app.description.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            // Update result counter
+            document.getElementById('results-count').innerText = `${filtered.length}টি অ্যাপ পাওয়া গেছে`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <i class="fa-solid fa-face-frown text-slate-300 dark:text-slate-700 text-6xl mb-4"></i>
+                        <p class="text-slate-500 dark:text-slate-400 text-lg font-semibold">আপনার খোঁজা অ্যাপটি পাওয়া যায়নি</p>
+                        <p class="text-slate-400 text-sm mt-1">অন্য কোনো নাম লিখে সার্চ করার চেষ্টা করুন</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(app => {
+                const isInstalled = installedApps.includes(app.id);
+                const installBtnText = isInstalled ? '<i class="fa-solid fa-circle-check"></i> ওপেন' : 'ইন্সটল';
+                const installBtnClass = isInstalled 
+                    ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-teal-300 border border-teal-500/20' 
+                    : 'bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 hover:bg-teal-600 hover:text-white dark:hover:bg-teal-500';
+
+                // Handle Icon Image Fallback logic
+                let iconContentHtml = '';
+                if (app.iconUrl && app.iconUrl.trim() !== '') {
+                    iconContentHtml = `<img src="${app.iconUrl}" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('icon-fallback-${app.id}').style.display='flex'">
+                                       <div id="icon-fallback-${app.id}" class="hidden absolute inset-0 items-center justify-center"><i class="fa-solid fa-mobile-screen-button text-white text-3xl"></i></div>`;
+                } else {
+                    iconContentHtml = `<i class="fa-solid ${app.category === 'apps' ? 'fa-mobile-screen-button' : 'fa-gamepad'}"></i>`;
+                }
+
+                const card = `
+                    <div class="group bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200/60 dark:border-slate-800/60 hover:border-teal-500/40 dark:hover:border-teal-400/40 hover:shadow-xl dark:hover:shadow-teal-950/20 transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1" onclick="openAppDetail('${app.id}')">
+                        <div>
+                            <!-- App Icon -->
+                            <div class="aspect-square rounded-2xl bg-gradient-to-tr ${app.gradient || 'from-teal-400 to-emerald-600'} text-white flex items-center justify-center text-3xl sm:text-4xl shadow-md group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
+                                ${iconContentHtml}
+                                ${isInstalled ? '<span class="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] border-2 border-white dark:border-slate-900"><i class="fa-solid fa-check"></i></span>' : ''}
+                            </div>
+                            <!-- Title & Info -->
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base mt-4 line-clamp-1 group-hover:text-teal-500 dark:group-hover:text-teal-400 transition">${app.title}</h3>
+                            <p class="text-slate-400 dark:text-slate-500 text-xs mt-0.5 font-medium truncate">${app.author}</p>
+                            <!-- Rating -->
+                            <div class="flex items-center gap-1 mt-2">
+                                <span class="text-amber-500 text-xs"><i class="fa-solid fa-star"></i></span>
+                                <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${app.rating || '5.0'}</span>
+                                <span class="text-slate-300 dark:text-slate-700 text-xs">•</span>
+                                <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">${app.size}</span>
+                            </div>
+                        </div>
+                        <!-- Action trigger -->
+                        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/60" onclick="event.stopPropagation()">
+                            <button id="card-btn-${app.id}" onclick="triggerCardInstall('${app.id}')" class="w-full py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${installBtnClass}">
+                                ${installBtnText}
+                            </button>
+                            <!-- Mini Card Progress Bar -->
+                            <div id="card-progress-container-${app.id}" class="hidden w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full mt-2 overflow-hidden">
+                                <div id="card-progress-${app.id}" class="bg-teal-500 h-full w-0 transition-all duration-100"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        // Filter Category Handler
+        function filterCategory(category) {
+            AudioEngine.playClick();
+            currentSelectedCategory = category;
+
+            // Reset navigation menu styling active status
+            const menuIds = ['all', 'apps', 'games'];
+            menuIds.forEach(id => {
+                const btn = document.getElementById(`nav-btn-${id}`);
+                if (btn) {
+                    if (id === category) {
+                        btn.className = "px-4 py-2 rounded-full text-sm font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition";
+                    }
+                }
+            });
+
+            // Set section dynamic title
+            const secTitle = document.getElementById('section-title');
+            if (category === 'all') {
+                secTitle.innerHTML = `<i class="fa-solid fa-fire text-amber-500"></i> সেরা ট্রেন্ডিং অ্যাপস ও গেমস`;
+            } else if (category === 'apps') {
+                secTitle.innerHTML = `<i class="fa-solid fa-mobile-screen-button text-teal-500"></i> প্রয়োজনীয় সকল অ্যাপ্লিকেশন`;
+            } else if (category === 'games') {
+                secTitle.innerHTML = `<i class="fa-solid fa-gamepad text-indigo-500"></i> জনপ্রিয় মজাদার গেমস`;
+            }
+
+            renderApps();
+        }
+
+        // Search Handlers
+        function handleSearch(val) {
+            searchQuery = val;
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (val.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            renderApps();
+        }
+
+        function clearSearch() {
+            AudioEngine.playClick();
+            document.getElementById('store-search').value = '';
+            document.getElementById('search-clear-btn').classList.add('hidden');
+            searchQuery = '';
+            renderApps();
+        }
+
+        function resetFilters() {
+            AudioEngine.playClick();
+            clearSearch();
+            filterCategory('all');
+        }
+
+        function selectMobileTab(element) {
+            document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                btn.classList.remove('text-teal-500');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400');
+            });
+            element.classList.remove('text-slate-500', 'dark:text-slate-400');
+            element.classList.add('text-teal-500');
+        }
+
+        // Simulating App Installation
+        function triggerCardInstall(appId) {
+            AudioEngine.playClick();
+            const app = apps.find(a => a.id === appId);
+            if (!app) return;
+
+            if (installedApps.includes(appId)) {
+                // Open Custom Download/Run Link if exists
+                if (app.downloadUrl) {
+                    window.open(app.downloadUrl, '_blank');
+                    showToast("অ্যাপ্লিকেশন লিংক ওপেন করা হচ্ছে...", "fa-circle-check");
+                } else {
+                    showToast("অ্যাপটি ইতিমধ্যে আপনার ডিভাইসে ইনস্টলড আছে!", "fa-circle-check");
+                }
+                return;
+            }
+
+            // Begin simulated installation
+            const cardBtn = document.getElementById(`card-btn-${appId}`);
+            const progressContainer = document.getElementById(`card-progress-container-${appId}`);
+            const progressBar = document.getElementById(`card-progress-${appId}`);
+
+            cardBtn.disabled = true;
+            cardBtn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> ডাউনলোড...`;
+            progressContainer.classList.remove('hidden');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Add app to local storage
+                    installedApps.push(appId);
+                    localStorage.setItem('labib_installed_apps', JSON.stringify(installedApps));
+                    
+                    // Reset UI representation
+                    cardBtn.disabled = false;
+                    cardBtn.className = "w-full py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-teal-300 border border-teal-500/20";
+                    cardBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ওপেন`;
+                    progressContainer.classList.add('hidden');
+                    
+                    updateLibraryCounter();
+                    renderApps();
+                    AudioEngine.playSuccess();
+                    showToast("অ্যাপ্লিকেশন ইন্সটলেশন সম্পন্ন হয়েছে!", "fa-circle-check");
+
+                    // Instantly trigger download link inside browser tab
+                    if (app.downloadUrl) {
+                        window.open(app.downloadUrl, '_blank');
+                    }
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 300);
+        }
+
+        // Modal Specific Installation System
+        function startInstallFromModal() {
+            AudioEngine.playClick();
+            const app = apps.find(a => a.id === selectedAppId);
+            if (!app) return;
+
+            if (installedApps.includes(selectedAppId)) {
+                if (app.downloadUrl) {
+                    window.open(app.downloadUrl, '_blank');
+                } else {
+                    showToast("অ্যাপ্লিকেশন ওপেন করা হচ্ছে...", "fa-circle-check");
+                }
+                return;
+            }
+
+            const installBtn = document.getElementById('modal-install-btn');
+            const progressContainer = document.getElementById('modal-progress-container');
+            const progressBar = document.getElementById('modal-progress-bar');
+            const percentLabel = document.getElementById('modal-progress-percent');
+            const labelText = document.getElementById('modal-progress-label');
+
+            installBtn.disabled = true;
+            installBtn.innerHTML = `ডাউনলোড হচ্ছে...`;
+            progressContainer.classList.remove('hidden');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+
+                    // Core Database update
+                    installedApps.push(selectedAppId);
+                    localStorage.setItem('labib_installed_apps', JSON.stringify(installedApps));
+
+                    // Reset buttons
+                    installBtn.disabled = false;
+                    installBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ওপেন করুন`;
+                    installBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/15 min-w-[120px]";
+                    
+                    labelText.innerText = "ইন্সটল করা হয়েছে";
+                    setTimeout(() => {
+                        progressContainer.classList.add('hidden');
+                    }, 1000);
+
+                    updateLibraryCounter();
+                    renderApps();
+                    AudioEngine.playSuccess();
+                    showToast("অ্যাপটি সফলভাবে ইন্সটল হয়েছে!", "fa-circle-check");
+
+                    // Open external download/preview url if exists
+                    if (app.downloadUrl) {
+                        window.open(app.downloadUrl, '_blank');
+                    }
+                }
+                progressBar.style.width = `${progress}%`;
+                percentLabel.innerText = `${progress}%`;
+            }, 250);
+        }
+
+        // App detail View Drawer Modal
+        function openAppDetail(appId) {
+            AudioEngine.playClick();
+            selectedAppId = appId;
+            const app = apps.find(a => a.id === appId);
+            if (!app) return;
+
+            // Fill details
+            document.getElementById('modal-app-name').innerText = app.title;
+            document.getElementById('modal-app-dev').innerText = app.author;
+            document.getElementById('modal-app-rating').innerText = app.rating || '5.0';
+            document.getElementById('modal-app-size').innerText = app.size;
+            document.getElementById('modal-app-downloads').innerText = app.downloads;
+            document.getElementById('modal-app-description').innerText = app.description;
+            
+            const categoryBadge = document.getElementById('modal-app-category-badge');
+            categoryBadge.innerText = app.category === 'apps' ? 'অ্যাপ্লিকেশান' : 'মোবাইল গেম';
+
+            // Set Icon
+            const iconImg = document.getElementById('modal-app-icon-img');
+            const iconFa = document.getElementById('modal-app-icon-fa');
+            
+            if (app.iconUrl && app.iconUrl.trim() !== '') {
+                iconImg.src = app.iconUrl;
+                iconImg.classList.remove('hidden');
+                iconFa.classList.add('hidden');
+            } else {
+                iconImg.classList.add('hidden');
+                iconFa.classList.remove('hidden');
+                iconFa.className = `fa-solid ${app.category === 'apps' ? 'fa-mobile-screen-button' : 'fa-gamepad'} text-slate-500 text-5xl`;
+            }
+
+            const iconContainer = document.getElementById('modal-app-icon-container');
+            iconContainer.className = `w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex items-center justify-center text-white text-5xl shadow-xl bg-gradient-to-tr ${app.gradient || 'from-teal-400 to-emerald-600'}`;
+
+            // Install Button State
+            const installBtn = document.getElementById('modal-install-btn');
+            const progressContainer = document.getElementById('modal-progress-container');
+            progressContainer.classList.add('hidden'); // Reset progress state
+
+            if (installedApps.includes(appId)) {
+                installBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ওপেন করুন`;
+                installBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/15 min-w-[120px]";
+            } else {
+                installBtn.innerHTML = `<i class="fa-solid fa-download"></i> ইন্সটল করুন`;
+                installBtn.className = "bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-teal-500/15 min-w-[120px]";
+            }
+
+            // Reviews Rendering
+            renderModalReviews(app);
+
+            // Hide the write review panel initially
+            document.getElementById('review-form-container').classList.add('hidden');
+
+            // Open Modal
+            document.getElementById('app-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Stop background scroll
+        }
+
+        function closeAppModal() {
+            document.getElementById('app-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Restore scroll
+        }
+
+        // Render Reviews
+        function renderModalReviews(app) {
+            const list = document.getElementById('modal-app-reviews');
+            list.innerHTML = '';
+            
+            if (!app.reviews || app.reviews.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">এই অ্যাপটির কোনো রিভিউ এখনও দেয়া হয়নি। প্রথম রিভিউটি আপনি লিখুন!</p>`;
+                return;
+            }
+
+            app.reviews.forEach(rev => {
+                let starsStr = '';
+                for (let i = 1; i <= 5; i++) {
+                    starsStr += `<i class="fa-solid fa-star text-xs ${i <= rev.rating ? 'text-amber-500' : 'text-slate-200 dark:text-slate-800'}"></i>`;
+                }
+
+                const block = `
+                    <div class="bg-slate-50 dark:bg-slate-950/50 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/40">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${rev.name}</span>
+                            <div class="flex gap-0.5">${starsStr}</div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-light leading-relaxed">${rev.comment}</p>
+                    </div>
+                `;
+                list.insertAdjacentHTML('beforeend', block);
+            });
+        }
+
+        // Interactive Reviews Creation
+        function toggleReviewForm() {
+            AudioEngine.playClick();
+            const container = document.getElementById('review-form-container');
+            container.classList.toggle('hidden');
+            selectReviewStars(5); // Default setup
+            document.getElementById('review-user-name').value = currentUser && !currentUser.isAnonymous ? currentUser.displayName : '';
+            document.getElementById('review-user-text').value = '';
+        }
+
+        function selectReviewStars(count) {
+            temporarySelectedStars = count;
+            const stars = document.getElementById('rating-stars-select').getElementsByTagName('i');
+            for (let i = 0; i < 5; i++) {
+                if (i < count) {
+                    stars[i].className = "fa-solid fa-star text-amber-500 cursor-pointer text-xl hover:scale-110 transition";
+                } else {
+                    stars[i].className = "fa-solid fa-star text-slate-300 dark:text-slate-700 cursor-pointer text-xl hover:scale-110 transition";
+                }
+            }
+        }
+
+        // Library Drawer Management
+        function toggleLibraryModal() {
+            AudioEngine.playClick();
+            const modal = document.getElementById('library-modal');
+            modal.classList.toggle('hidden');
+            
+            if (!modal.classList.contains('hidden')) {
+                renderLibrary();
+            }
+        }
+
+        function renderLibrary() {
+            const container = document.getElementById('library-apps-container');
+            const emptyState = document.getElementById('empty-library-state');
+            container.innerHTML = '';
+
+            if (installedApps.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            installedApps.forEach(id => {
+                const app = apps.find(a => a.id === id);
+                if (app) {
+                    const row = `
+                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/60 hover:shadow transition">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${app.gradient || 'from-teal-400 to-emerald-600'} text-white flex items-center justify-center text-xl overflow-hidden">
+                                    ${app.iconUrl ? `<img src="${app.iconUrl}" class="w-full h-full object-cover">` : `<i class="fa-solid ${app.category==='apps'?'fa-mobile-screen-button':'fa-gamepad'}"></i>`}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">${app.title}</h4>
+                                    <p class="text-xs text-slate-400 font-medium truncate w-32 sm:w-44">${app.author}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openAppDetail('${app.id}'); toggleLibraryModal()" class="bg-teal-500 hover:bg-teal-600 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition">ওপেন</button>
+                                <button onclick="uninstallApp('${app.id}')" class="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-1.5 rounded-lg transition" title="আনইন্সটল"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', row);
+                }
+            });
+        }
+
+        function uninstallApp(appId) {
+            AudioEngine.playClick();
+            installedApps = installedApps.filter(id => id !== appId);
+            localStorage.setItem('labib_installed_apps', JSON.stringify(installedApps));
+            
+            updateLibraryCounter();
+            renderLibrary();
+            renderApps();
+            showToast("অ্যাপ্লিকেশনটি আনইন্সটল করা হয়েছে।", "fa-circle-check");
+        }
+
+        function updateLibraryCounter() {
+            document.getElementById('library-count').innerText = installedApps.length;
+        }
+
+        // Developer Console Submission Actions
+        function openDeveloperPortal() {
+            AudioEngine.playClick();
+            document.getElementById('developer-modal').classList.remove('hidden');
+        }
+
+        function closeDeveloperPortal() {
+            document.getElementById('developer-modal').classList.add('hidden');
+        }
+
+        // Dynamic Configuration Modal Switches
+        function toggleConfigModal() {
+            AudioEngine.playClick();
+            document.getElementById('config-modal').classList.toggle('hidden');
+        }
+
+        // Custom Toast Engine
+        function showToast(message, iconName) {
+            const toast = document.getElementById('toast-message');
+            const text = document.getElementById('toast-text');
+            const icon = document.getElementById('toast-icon');
+
+            text.innerText = message;
+            icon.innerHTML = `<i class="fa-solid ${iconName}"></i>`;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // System Theme Toggle
+        function toggleTheme() {
+            AudioEngine.playClick();
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</body>
+</html>
